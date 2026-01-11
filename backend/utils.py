@@ -159,7 +159,7 @@ def select_cheapest_hours(start_charge_timestamp, df, end_charge, soc):
     else:
         diff_to_referance_hour = start_charge.hour # in this case ref hour is 00:00
 
-
+    print(df)
     selected_hours = [(i,df[j]) for i,j in zip(hours,range(diff_to_referance_hour,diff_to_referance_hour+len(hours)))]
 
     #selected_hours = [x for x in hourly_values if x[0] in hours]

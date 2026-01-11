@@ -9,3 +9,4 @@ SHELLY_ID = os.getenv("SHELLY_ID")
 
 ENTSOE_API_KEY = os.getenv("ENTSOE_API_KEY")
 ESIOS_API_KEY = os.getenv("ESIOS_API_KEY")
+DB_URL = os.getenv("DB_URL")

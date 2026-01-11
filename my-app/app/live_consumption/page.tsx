@@ -151,6 +151,7 @@ export default function Home() {
   useEffect(() => {
     if (pick_up_hour == null || sessionStartHour == null) return;
 
+    const now = new Date();
     const pickup = new Date(sessionStartHour);
     pickup.setHours(pick_up_hour, 0, 0, 0);
     if (pickup < sessionStartHour) {
@@ -158,7 +159,6 @@ export default function Home() {
     }
     
     const interval = setInterval(() => {
-      const now = new Date();
       const diff = pickup.getTime() - now.getTime();
 
       if (diff <= 0) {
