@@ -1,5 +1,6 @@
 fastapi
 uvicorn
+psycopg
 psycopg-pool
 paho-mqtt
 numpy
