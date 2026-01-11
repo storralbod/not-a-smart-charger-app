@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+psycopg-pool
+paho-mqtt
+numpy
+pandas
+requests
+python-dotenv

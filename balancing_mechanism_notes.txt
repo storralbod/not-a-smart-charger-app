@@ -1,0 +1,10 @@
+mFRR down is below DA price. Why? Because generators have been payed already in DA (since to provide downreg you need to be generating) and so it is only profitable to set a lower down reg price singe they need to payback their downreg energy. So, downreg price should be lower than marginal cost. That way it is cheaper to just pay to not produce instead of paying to produce at marginal cost.
+
+mFRR down is only profitable for renewables when prices or zero or negative. Why? Because their marginal cost is basically zero so they do not win anything by paying to produce less.
+
+aFRR up is only profitable if capacity prices are high or if probability of getting activated for up-reg is high.Furthermore, aFRR, still being only a capacity market, is seen as economically unprofitable to participate in upward regulation at current market prices since this requires curtailing production and
+foregoing potential Day-ahead revenues. Whereas downward regulation is unprofitable as the purchase price of energy is mostly positive, and thus buying back wind power is not profitable.
+
+aFRR and mFRR up (system needs more generation or reduced consumption) -> Not charge, export more, discharge battery/use battery from home. If you are as an aggregator a net exporter, then you want to deliver this service if the capacity and/or imbalance prices are higher than day-ahead prices. If you are, as an aggregator, a net demand, then you want to deliver this service if the capacity and/or imbalance prices are higher than day-ahead prices. 
+
+aFRR and mFRR down (systems needs less generation or more consumption). As a net generator, you want to deliver this service if prices are negative. As a net consumer, you want to deliver this service if prices are negative or lower than day-ahead prices. 
