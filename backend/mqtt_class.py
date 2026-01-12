@@ -164,10 +164,12 @@ class MQTTClass():
         save_power_reading(
             device_id=self.device_id,
             power=0,
-            timestamp = spain_time_now(timezone.utc).isoformat()
+            timestamp = spain_time_now.astimezone(timezone.utc).isoformat()
         )
         
         while spain_time_now < end_date: # change to while datetime.now() < user_inputted_end_hour
+            spain_time_now = datetime.now(spain_tz)
+            print("INSIDE WHILE LOOP")
             if self.hour_match(hours):
                 self.set_switch(True)
                 self.confirm_switch_state(True)
@@ -182,7 +184,7 @@ class MQTTClass():
                 save_power_reading(
                     device_id=self.device_id,
                     power=0,
-                    timestamp = spain_time_now(timezone.utc).isoformat()
+                    timestamp = spain_time_now.astimezone(timezone.utc).isoformat()
                 )
                 
                 sleep_seconds = seconds_until_next_hour()
@@ -197,7 +199,7 @@ class MQTTClass():
         save_power_reading(
             device_id=self.device_id,
             power=0,
-            timestamp = spain_time_now(timezone.utc).isoformat()
+            timestamp = spain_time_now.astimezone(timezone.utc).isoformat()
         )
 
     def force_stop_charging(self):
