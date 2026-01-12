@@ -26,7 +26,8 @@ export default function HomePage() {
 
     try {
       const res = await fetch(
-      `http://localhost:8000/api/charge?${params.toString()}`,
+      //`http://localhost:8000/api/charge?${params.toString()}`,
+      `https://not-a-smart-charger-app.onrender.com/api/charge?${params.toString()}`,
       {
         method: "POST",
       }

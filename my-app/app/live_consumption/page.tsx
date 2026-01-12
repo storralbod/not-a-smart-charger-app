@@ -100,7 +100,8 @@ export default function Home() {
 
     const fetchSchedule = async () => {
       const res = await fetch(
-        `http://localhost:8000/api/charging_schedule` +
+        //`http://localhost:8000/api/charging_schedule` +
+        `https://not-a-smart-charger-app.onrender.com/api/charging_schedule` +
         `?start_charge_timestamp=${encodeURIComponent(start_charge_timestamp!)}` +
         `&hours=${pick_up_hour}` +
         `&soc=${soc}`

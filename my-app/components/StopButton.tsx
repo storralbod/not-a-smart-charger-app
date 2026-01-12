@@ -13,7 +13,8 @@ export default function StopButton({ onStop, disabled = false }: StopButtonProps
     const [stop, setStop] = useState(false)
 
     const handleStop = async() => {
-        const res = await fetch("http://127.0.0.1:8000/api/stop_charging", {method: "POST", headers: {"Content-Type": "application/json",}});
+        //const res = await fetch("http://127.0.0.1:8000/api/stop_charging", {method: "POST", headers: {"Content-Type": "application/json",}});
+        const res = await fetch("https://not-a-smart-charger-app.onrender.com/api/stop_charging", {method: "POST", headers: {"Content-Type": "application/json",}});
 
         if (!res.ok) {
             throw new Error ("Failed to stop");

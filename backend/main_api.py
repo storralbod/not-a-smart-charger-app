@@ -20,6 +20,11 @@ app.add_middleware(
     allow_headers=["*"],       
 )
 
+
+@app.get("/")
+def root():
+    return {"message": "Hello, backend server is running!"}
+
 @app.websocket("/ws/power")
 async def websocket_endpoint(ws: WebSocket):
     await ws.accept()

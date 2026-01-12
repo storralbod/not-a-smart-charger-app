@@ -58,7 +58,8 @@ export default function HistoricPowerChart({
     if (!startDate || !endDate) return;
 
     fetch(
-      `http://localhost:8000/api/get_historic_power?start_dt=${startDate}&end_dt=${endDate}`
+      //`http://localhost:8000/api/get_historic_power?start_dt=${startDate}&end_dt=${endDate}`
+      `https://not-a-smart-charger-app.onrender.com/api/get_historic_power?start_dt=${startDate}&end_dt=${endDate}`
     )
       .then((res) => res.json())
       .then((points: ApiPoint[]) => {
