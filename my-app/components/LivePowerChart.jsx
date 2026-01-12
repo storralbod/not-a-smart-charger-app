@@ -33,7 +33,7 @@ export default function LivePowerChart() {
   /* Initial load */
   useEffect(() => {
     //fetch("http://127.0.0.1:8000/api/power?hours=24")
-    fetch("https://not-a-smart-charger-app.onrender.com/api/powe?hours=24")
+    fetch("https://not-a-smart-charger-app.onrender.com/api/power?hours=24")
       .then((res) => res.json())
       .then((points) => {
         setDataPoints(
@@ -48,7 +48,8 @@ export default function LivePowerChart() {
   /* WebSocket updates */
   useEffect(() => {
     //wsRef.current = new WebSocket("ws://127.0.0.1:8000/ws/power");
-    wsRef.current = new WebSocket("ws://not-a-smart-charger-app.onrender.com/ws/power");
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    wsRef.current = new WebSocket(`${protocol}//not-a-smart-charger-app.onrender.com/ws/power`);
 
     wsRef.current.onmessage = (event) => {
       const msg = JSON.parse(event.data);
