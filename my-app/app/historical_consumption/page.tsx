@@ -58,7 +58,7 @@ export default function HistoricCostsPage() {
 
         const res_consumption = await fetch(
           //`http://localhost:8000/api/get_historic_power?start_dt=${startDate}&end_dt=${endDate}`
-          `https://not-a-smart-charger-app.onrender.com/get_historic_power?start_dt=${startDate}&end_dt=${endDate}`
+          `https://not-a-smart-charger-app.onrender.com/api/get_historic_power?start_dt=${startDate}&end_dt=${endDate}`
         );
         const total_consumption_json: MonthlyConsumption[] = await res_consumption.json();
 
