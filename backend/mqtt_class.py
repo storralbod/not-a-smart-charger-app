@@ -156,7 +156,7 @@ class MQTTClass():
         spain_tz = ZoneInfo("Europe/Madrid")
         spain_time_now = datetime.now(spain_tz)
         end_date = spain_time_now.replace(hour=end_charge_hour, minute=0, second=0, microsecond=0)
-        if end_date <= datetime.now():
+        if end_date <= spain_time_now:
             end_date += timedelta(days=1)
             
         save_power_reading(
@@ -165,11 +165,11 @@ class MQTTClass():
             timestamp = spain_time_now(timezone.utc).isoformat()
         )
         
-        while datetime.now() < end_date: # change to while datetime.now() < user_inputted_end_hour
+        while spain_time_now < end_date: # change to while datetime.now() < user_inputted_end_hour
             if self.hour_match(hours):
                 self.set_switch(True)
                 self.confirm_switch_state(True)
-                while self.hour_match(hours) and datetime.now() < end_date:
+                while self.hour_match(hours) and spain_time_now < end_date:
                     self.client.publish(self.switch_command_topic, "status_update")
                     time.sleep(1)
             else:
