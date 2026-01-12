@@ -193,8 +193,8 @@ class MQTTClass():
 
     def force_stop_charging(self):
 
-        self.set_switch(False)
-        self.confirm_switch_state(False)
+        self.set_switch(True)
+        self.confirm_switch_state(True)
         self.client.loop_stop()
 
         return self.switch_on
