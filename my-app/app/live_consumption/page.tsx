@@ -18,6 +18,8 @@ import ChargingClock from "../../components/ChargingClock";
 import StopButton from "../../components/StopButton";
 import { buildChargingSchedule } from "./chargingSchedule";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   const router = useRouter();
   const searchParams = useSearchParams();
