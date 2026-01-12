@@ -4,6 +4,7 @@ import paho.mqtt.client as mqtt
 import json
 import time
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from .db import pool
 
 
@@ -86,6 +87,7 @@ class MQTTClass():
 
     def on_message(self, client, userdata, msg):
         payload = json.loads(msg.payload.decode())
+        print(payload)
         if msg.topic == self.switch_status_topic:
             self.last_status = payload
             self.switch_on = payload.get("output", self.switch_on)
@@ -144,18 +146,23 @@ class MQTTClass():
 
     @staticmethod
     def hour_match(hours):
-        return datetime.now().hour in hours
+        spain_tz = ZoneInfo("Europe/Madrid")
+        spain_time_now = datetime.now(spain_tz)
+        return spain_time_now.hour in hours
+
 
     def run_charging_schedule(self, hours, end_charge_hour):
         print("Charging hours:", hours)
-        end_date = datetime.now().replace(hour=end_charge_hour, minute=0, second=0, microsecond=0)
+        spain_tz = ZoneInfo("Europe/Madrid")
+        spain_time_now = datetime.now(spain_tz)
+        end_date = spain_time_now.replace(hour=end_charge_hour, minute=0, second=0, microsecond=0)
         if end_date <= datetime.now():
             end_date += timedelta(days=1)
             
         save_power_reading(
             device_id=self.device_id,
             power=0,
-            timestamp = datetime.now(timezone.utc).isoformat()
+            timestamp = spain_time_now(timezone.utc).isoformat()
         )
         
         while datetime.now() < end_date: # change to while datetime.now() < user_inputted_end_hour
@@ -173,7 +180,7 @@ class MQTTClass():
                 save_power_reading(
                     device_id=self.device_id,
                     power=0,
-                    timestamp = datetime.now(timezone.utc).isoformat()
+                    timestamp = spain_time_now(timezone.utc).isoformat()
                 )
                 
                 sleep_seconds = seconds_until_next_hour()
@@ -188,7 +195,7 @@ class MQTTClass():
         save_power_reading(
             device_id=self.device_id,
             power=0,
-            timestamp = datetime.now(timezone.utc).isoformat()
+            timestamp = spain_time_now(timezone.utc).isoformat()
         )
 
     def force_stop_charging(self):

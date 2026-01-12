@@ -171,14 +171,15 @@ def select_cheapest_hours(start_charge_timestamp, df, end_charge, soc):
     
     final_hours = [x[0] for x in sorted_hours[:num_of_charge_hours_needed]]
     
-    if start_charge in final_hours and datetime.now().minute > 20:
+    if start_charge in final_hours and datetime.now(spain_tz).minute > 20:
         final_hours = [x[0] for x in sorted_hours[:num_of_charge_hours_needed+1]]
 
     return final_hours
 
 
 def seconds_until_next_hour():
-    now = datetime.now()
+    spain_tz = ZoneInfo("Europe/Madrid")
+    now = datetime.now(spain_tz)
     next_hour = (now + timedelta(hours=1)).replace(
         minute=0, second=0, microsecond=0
     )
