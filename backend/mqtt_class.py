@@ -169,7 +169,6 @@ class MQTTClass():
         
         while spain_time_now < end_date: # change to while datetime.now() < user_inputted_end_hour
             spain_time_now = datetime.now(spain_tz)
-            print("INSIDE WHILE LOOP")
             if self.hour_match(hours):
                 self.set_switch(True)
                 self.confirm_switch_state(True)
@@ -204,8 +203,8 @@ class MQTTClass():
 
     def force_stop_charging(self):
 
-        self.set_switch(True)
-        self.confirm_switch_state(True)
+        self.set_switch(False)
+        self.confirm_switch_state(False)
         self.client.loop_stop()
 
         return self.switch_on

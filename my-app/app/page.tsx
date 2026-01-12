@@ -38,10 +38,6 @@ export default function HomePage() {
         throw new Error("Failed to start charging");
       }
 
-      alert(
-        `Charging started\n\nTime: ${hours}h ${minutes}m\nState of Charge: ${soc}%`
-      );
-
       localStorage.setItem("hours", String(hours));
       localStorage.setItem("soc", String(soc));
       localStorage.setItem("start_charge_timestamp", startChargeTimestamp);
