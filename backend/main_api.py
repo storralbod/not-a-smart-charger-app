@@ -12,9 +12,14 @@ from .config import MQTT_SERVER, MQTT_PORT, SHELLY_ID
 
 app = FastAPI()
 
+origins = [
+    "https://not-a-smart-charger-app-s23i.vercel.app",
+    "http://localhost:3000"  # for local testing
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],     
+    allow_origins=origins,     
     allow_credentials=True,
     allow_methods=["*"],       
     allow_headers=["*"],       
