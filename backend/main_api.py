@@ -62,6 +62,7 @@ async def start_charge(start_charge_timestamp:str, hours:int,minutes:int,soc:int
 
     session.controller = controller
     session.task = asyncio.create_task(charge(start_charge_timestamp, hours, minutes, soc, controller))
+    print("API fun start time:", start_charge_timestamp)
     return {"status":"started"}
 
 @app.get("/api/charging_schedule")

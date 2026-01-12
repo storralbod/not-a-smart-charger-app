@@ -87,7 +87,7 @@ class MQTTClass():
 
     def on_message(self, client, userdata, msg):
         payload = json.loads(msg.payload.decode())
-        print(payload)
+
         if msg.topic == self.switch_status_topic:
             self.last_status = payload
             self.switch_on = payload.get("output", self.switch_on)
@@ -156,6 +156,8 @@ class MQTTClass():
         spain_tz = ZoneInfo("Europe/Madrid")
         spain_time_now = datetime.now(spain_tz)
         end_date = spain_time_now.replace(hour=end_charge_hour, minute=0, second=0, microsecond=0)
+        print("charging func spain time:", spain_time_now)
+        print("charging fun end time:", end_date)
         if end_date <= spain_time_now:
             end_date += timedelta(days=1)
             
