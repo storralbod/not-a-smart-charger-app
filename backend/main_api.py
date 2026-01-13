@@ -62,8 +62,29 @@ async def start_charge(start_charge_timestamp:str, hours:int,minutes:int,soc:int
 
     session.controller = controller
     session.task = asyncio.create_task(charge(start_charge_timestamp, hours, minutes, soc, controller))
-    print("API fun start time:", start_charge_timestamp)
+
     return {"status":"started"}
+
+
+@app.post("/api/save_session")
+def save_session(start_charge_timestamp:str, hours:int,minutes:int,soc:int):
+    save_sessions_to_db(start_charge_timestamp, hours, minutes, soc)
+
+    return {"status": "saving session to db"}
+
+@app.get("/api/select_latest_session")
+def select_latest_session(start_charge_timestamp:str, hours:int,minutes:int,soc:int):
+    rows = select_latest_session_from_db(start_charge_timestamp, hours, minutes, soc)
+
+    return [{
+        "start_charge_timestamp": start_charge_timestamp,
+        "pick_up_hour": pick_up_hour,
+        "pick_up_minute": pick_up_minute,
+        "soc": soc,
+        } 
+        for start_charge_timestamp, pick_up_hour, pick_up_minute, soc in rows
+    ]
+
 
 @app.get("/api/charging_schedule")
 async def get_charging_schedule(start_charge_timestamp:str, hours: int, soc: int):
@@ -166,11 +187,12 @@ def get_historic_costs(start_dt:str,end_dt:str):
         .groupby(["year", "month"], as_index=False)
         .agg(total_cost=("cost", "sum"))
     )
-    print(monthly_costs)
 
     return monthly_costs.to_dict(orient="records")
 
-
+@app.get("/uptime_bot")
+async def uptime_bot_check():
+    return {"status_bot": "ok"}
 
         
 
