@@ -206,7 +206,7 @@ def create_table():
         start_charge_timestamp TIMESTAMPTZ NOT NULL,
         pick_up_hour INT NOT NULL,
         pick_up_minute INT NOT NULL,
-        soc INT NOT NULL,            
+        soc INT NOT NULL            
     );
     '''
     CREATE_SESSIONS_INDEX_SQL = ''' 
