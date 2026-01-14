@@ -68,7 +68,7 @@ export default function LoginPage() {
                     <input
                         name="username"
                         required
-                        className="w-full border-1 border-gray-300 px-3 py-2 rounded-md"
+                        className="w-full border-1 border-gray-300 px-3 py-2 rounded-md focus:outline-gray-300"
                     />
                     </div>
 
@@ -78,7 +78,7 @@ export default function LoginPage() {
                             name="password"
                             type="password"
                             required
-                            className="w-full border-1 border-gray-300 border px-3 py-2 rounded-md"
+                            className="w-full border-1 border-gray-300 border px-3 py-2 rounded-md focus:outline-gray-300"
                         />
                     </div>
                     <div className = "text-left mb-6">
