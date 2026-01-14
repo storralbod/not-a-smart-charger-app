@@ -225,7 +225,7 @@ async def login(response: Response, data: LoginRequest):
         value=token,
         httponly=True,
         secure=True,     # set False for localhost
-        samesite="lax",
+        samesite="none",
         max_age=49*60*60,    # 2 hours
         expires=49*60*60
     )
