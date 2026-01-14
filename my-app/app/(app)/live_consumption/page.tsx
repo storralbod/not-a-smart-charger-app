@@ -57,8 +57,8 @@ export default function Home() {
   };
 
   const clearChargingSession = () => {
-    localStorage.removeItem("hours");
-    localStorage.removeItem("soc");
+    //localStorage.removeItem("hours");
+    //localStorage.removeItem("soc");
 
     setChargingHours([]);
     setPickUpHour(null);
@@ -71,46 +71,46 @@ export default function Home() {
     setStopped(true);
     setChargingStatus("idle");
     clearChargingSession();
-  };
+  };  
 
+  useEffect(() => {
+    if (pickUpFromUrl !== null && socFromUrl !== null && startChargeFromUrl) {
+      // URL params
+      setPickUpHour(pickUpFromUrl);
+      setSoc(socFromUrl);
+      setStartChargeTimestamp(startChargeFromUrl);
 
-useEffect(() => {
-  if (pickUpFromUrl !== null && socFromUrl !== null && startChargeFromUrl) {
-    // URL params
-    setPickUpHour(pickUpFromUrl);
-    setSoc(socFromUrl);
-    setStartChargeTimestamp(startChargeFromUrl);
+      //localStorage.setItem("hours", String(pickUpFromUrl));
+      //localStorage.setItem("soc", String(socFromUrl));
+      //localStorage.setItem("start_charge_timestamp", startChargeFromUrl);
+    } //else if (
+      //localStorage.getItem("hours") &&
+      //localStorage.getItem("soc") &&
+      //localStorage.getItem("start_charge_timestamp")
+    //) {
+      // cache to localStorage
+      //setPickUpHour(Number(localStorage.getItem("hours")));
+      //setSoc(Number(localStorage.getItem("soc")));
+      //setStartChargeTimestamp(localStorage.getItem("start_charge_timestamp"));
+    //} 
+    else {
+      // fetch from backend
+      fetch("https://not-a-smart-charger-app-sessions.onrender.com/api/select_latest_session")
+        .then(res => res.json())
+        .then(data => {
+          if (data) {
+            setPickUpHour(data.pick_up_hour);
+            setSoc(data.soc);
+            setStartChargeTimestamp(data.start_charge_timestamp);
 
-    localStorage.setItem("hours", String(pickUpFromUrl));
-    localStorage.setItem("soc", String(socFromUrl));
-    localStorage.setItem("start_charge_timestamp", startChargeFromUrl);
-  } else if (
-    localStorage.getItem("hours") &&
-    localStorage.getItem("soc") &&
-    localStorage.getItem("start_charge_timestamp")
-  ) {
-    // cache to localStorage
-    setPickUpHour(Number(localStorage.getItem("hours")));
-    setSoc(Number(localStorage.getItem("soc")));
-    setStartChargeTimestamp(localStorage.getItem("start_charge_timestamp"));
-  } else {
-    // fetch from backend
-    fetch("https://not-a-smart-charger-app-sessions.onrender.com/api/select_latest_session")
-      .then(res => res.json())
-      .then(data => {
-        if (data) {
-          setPickUpHour(data.pick_up_hour);
-          setSoc(data.soc);
-          setStartChargeTimestamp(data.start_charge_timestamp);
-
-          // cache in localStorage
-          localStorage.setItem("hours", String(data.pick_up_hour));
-          localStorage.setItem("soc", String(data.soc));
-          localStorage.setItem("start_charge_timestamp", data.start_charge_timestamp);
-        }
-      });
-  }
-}, [pickUpFromUrl, socFromUrl, startChargeFromUrl]);
+            // cache in localStorage
+            //localStorage.setItem("hours", String(data.pick_up_hour));
+            //localStorage.setItem("soc", String(data.soc));
+            //localStorage.setItem("start_charge_timestamp", data.start_charge_timestamp);
+          }
+        });
+    }
+  }, [pickUpFromUrl, socFromUrl, startChargeFromUrl]);
 
 
   useEffect(() => {
@@ -135,7 +135,7 @@ useEffect(() => {
   useEffect(() => {
     if (pick_up_hour == null || sessionStartHour == null) return;
 
-    const pickup = sessionStartHour;
+    const pickup = new Date(sessionStartHour);
 
     pickup.setHours(pick_up_hour, 0, 0, 0);
 

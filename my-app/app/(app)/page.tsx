@@ -59,7 +59,6 @@ export default function HomePage() {
         method: "POST",
       }
     );
-    console.log("Save session to db status:", res.status)
     } catch (error) {
       console.error(error);
     }

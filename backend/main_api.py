@@ -79,13 +79,13 @@ async def start_charge(start_charge_timestamp:str, hours:int,minutes:int,soc:int
 @app.post("/api/save_session")
 def save_session(start_charge_timestamp:str, hours:int,minutes:int,soc:int):
     save_sessions_to_db(start_charge_timestamp, hours, minutes, soc)
-
+    print("Saving session to db")
     return {"status": "saving session to db"}
 
 @app.get("/api/select_latest_session")
 def select_latest_session(start_charge_timestamp:str, hours:int,minutes:int,soc:int):
     rows = select_latest_session_from_db(start_charge_timestamp, hours, minutes, soc)
-
+    print("Collecting latest session data")
     return [{
         "start_charge_timestamp": start_charge_timestamp,
         "pick_up_hour": pick_up_hour,
@@ -224,7 +224,7 @@ async def login(response: Response, data: LoginRequest):
         key="access_token",
         value=token,
         httponly=True,
-        secure=False,     # set False for localhost
+        secure=True,     # set False for localhost
         samesite="lax",
         max_age=49*60*60,    # 2 hours
         expires=49*60*60
