@@ -1,14 +1,19 @@
 import asyncio
-from fastapi import FastAPI, WebSocket, BackgroundTasks
+from fastapi import FastAPI, WebSocket, BackgroundTasks, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import json
 from datetime import datetime, timezone
+from pydantic import BaseModel
+from passlib.context import CryptContext
 from .utils import *
 from .mqtt_class import *
 from .db import pool
 from .session_manager import session
-from .config import MQTT_SERVER, MQTT_PORT, SHELLY_ID
+from .config import MQTT_SERVER, MQTT_PORT, SHELLY_ID, APP_USERNAME, APP_PASSWORD
 
+#pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+#hashed_password = pwd_context.hash(PASSWORD)
 
 app = FastAPI()
 
@@ -24,6 +29,11 @@ app.add_middleware(
     allow_methods=["*"],       
     allow_headers=["*"],       
 )
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
 
 
 @app.get("/")
@@ -194,12 +204,39 @@ def get_historic_costs(start_dt:str,end_dt:str):
 async def uptime_bot_check():
     return {"status_bot": "ok"}
 
-        
+
+@app.post("/api/login")
+async def login(response: Response, data: LoginRequest):
+    username = data.username
+    password = data.password
+
+    if username != APP_USERNAME or password!=APP_PASSWORD:
+        print(username, APP_USERNAME)
+        print(password, APP_PASSWORD)
+        print("Not authorized")
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    token = create_access_token({"sub": username})
+    print(token)
+
+    response = JSONResponse(content={"username": username})
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        secure=False,     # set False for localhost
+        samesite="lax",
+        max_age=49*60*60,    # 2 hours
+        expires=49*60*60
+    )
+    print("Logged in")
+    return response     
 
 
 
-
-
+@app.get("/api/me")
+async def me(username=Depends(get_current_user)):
+    return {"username":username}
 
 
 

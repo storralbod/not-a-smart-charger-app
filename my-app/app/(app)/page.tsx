@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Zap } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const MINUTES = [0, 15, 30, 45];
@@ -13,6 +14,8 @@ export default function HomePage() {
   const [minutes, setMinutes] = useState(0);
   const [soc, setSoc] = useState(50);
   const router = useRouter();
+  const [start, setStart] = useState(false)
+
 
   const handleSubmit = async () => {
     const startChargeTimestamp = new Date().toISOString();
@@ -32,11 +35,12 @@ export default function HomePage() {
         method: "POST",
       }
       );
-      console.log("Response object:", res);
-      console.log("Status:", res.status);
+      console.log("Start charging status:", res.status);
       if (!res.ok) {
         throw new Error("Failed to start charging");
       }
+
+      setStart(true);
 
       localStorage.setItem("hours", String(hours));
       localStorage.setItem("soc", String(soc));
@@ -47,6 +51,17 @@ export default function HomePage() {
     } catch (error) {
       console.error(error);
       alert("Failed to start charging. Please try again.");
+    }
+
+    try {
+      const res = await fetch(`https://not-a-smart-charger-app-sessions.onrender.com/api/save_session?${params.toString()}`,
+      {
+        method: "POST",
+      }
+    );
+    console.log("Save session to db status:", res.status)
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -113,7 +128,12 @@ export default function HomePage() {
         {/* SUBMIT */}
         <button
           onClick={handleSubmit}
-          className="flex flex-items justify-center gap-2 uppercase mx-auto block w-full max-w-sm bg-green-500/90 border border-green-600 text-green-800 py-3 rounded-lg font-semibold hover:bg-green-600/90 transition"
+          className={`
+            group w-full font-bold py-3.5 rounded-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 uppercase text-xs cursor-pointer
+            ${start
+              ? "bg-green-600/90 border border-green-700 text-green-800 cursor-not-allowed pointer-events-none text-green-900"
+              : "bg-green-500/50 border border-green-600 text-green-800 hover:bg-green-600/90 hover:border-green-700"}
+          `}
         >
         <Zap />Start
         </button>

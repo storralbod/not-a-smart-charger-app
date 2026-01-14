@@ -1,5 +1,5 @@
 from psycopg_pool import ConnectionPool
-from .config import DB_URL
+from .config import DB_URL, SESSIONS_DB_URL
 
 pool = ConnectionPool(
     #conninfo="postgresql://postgres:postgres@localhost:5432/shelly", #ensure db url is correct when deploying
@@ -8,4 +8,3 @@ pool = ConnectionPool(
     max_size=10,
     open=True
 )
-

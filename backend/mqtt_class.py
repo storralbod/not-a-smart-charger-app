@@ -156,8 +156,7 @@ class MQTTClass():
         spain_tz = ZoneInfo("Europe/Madrid")
         spain_time_now = datetime.now(spain_tz)
         end_date = spain_time_now.replace(hour=end_charge_hour, minute=0, second=0, microsecond=0)
-        print("charging func spain time:", spain_time_now)
-        print("charging fun end time:", end_date)
+
         if end_date <= spain_time_now:
             end_date += timedelta(days=1)
             

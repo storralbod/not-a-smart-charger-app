@@ -4,11 +4,14 @@ import numpy as np
 import pandas as pd
 import requests
 import xml.etree.ElementTree as ET
+from jose import jwt, JWTError
+from passlib.context import CryptContext
+from fastapi import Request, HTTPException
 from .mappings import lookup_area
 from .db import pool
 import asyncio
 from .mqtt_class import MQTTClass
-from .config import ENTSOE_API_KEY,ESIOS_API_KEY
+from .config import ENTSOE_API_KEY,ESIOS_API_KEY, APP_USERNAME, JWT_SECRET
 
 
 
@@ -198,11 +201,26 @@ def create_table():
         CREATE INDEX IF NOT EXISTS idx_power_device_ts
         ON power_readings (timestamp DESC, device_id);
     """
+    CREATE_SESSIONS_TABLE_SQL = '''
+        CREATE TABLE IF NOT EXISTS sessions (
+        start_charge_timestamp TIMESTAMPTZ NOT NULL,
+        pick_up_hour INT NOT NULL,
+        pick_up_minute INT NOT NULL,
+        soc INT NOT NULL,            
+    );
+    '''
+    CREATE_SESSIONS_INDEX_SQL = ''' 
+        CREATE INDEX IF NOT EXISTS idx_sessions_start
+        ON sessions (start_charge_timestamp DESC);
+    '''
 
     with pool.connection() as conn:
         with conn.cursor() as cur:
             cur.execute(CREATE_TABLE_SQL)
             cur.execute(CREATE_INDEX_SQL)
+            cur.execute(CREATE_SESSIONS_TABLE_SQL)
+            cur.execute(CREATE_SESSIONS_INDEX_SQL)
+
 
 async def charge(start_charge_timestamp, hours, minutes, soc, controller: MQTTClass):
 
@@ -286,3 +304,64 @@ def historic_prices_pvpc(start_dt, end_dt):
 
     return pvpc_hour_values
 
+
+def save_sessions_to_db(start_charge_timestamp, hours:int , minutes:int, soc:int):
+
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO sessions (start_charge_timestamp, pick_up_hour, pick_up_minute, soc)
+                VALUES (%s, %s, %s, %s)
+                """,
+                (start_charge_timestamp, hours, minutes, soc)
+            )
+    
+def select_latest_session_from_db(start_charge_timestamp, hours:int , minutes:int, soc:int):
+
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute( 
+                """
+                SELECT *
+                FROM sessions
+                ORDER BY start_charge_timestamp DESC
+                LIMIT 1;
+                """,
+                (start_charge_timestamp, hours, minutes, soc)
+            )
+            results = cur.fetchall()
+
+    return results
+
+
+def verify_password(plain, hashed):
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    return pwd_context.verify(plain, hashed)
+
+def create_access_token(data: dict):
+    payload = data.copy()
+    spain_tz = ZoneInfo("Europe/Madrid")
+    expire = datetime.now(spain_tz) + timedelta(hours=48)
+    payload["exp"] = int(expire.timestamp())
+    return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
+
+def get_current_user(request: Request):
+    token = request.cookies.get("access_token")
+
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        username = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=401)
+    except JWTError as err:
+        print(err)
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+
+    if username != APP_USERNAME:
+        raise HTTPException(status_code=401, detail="Not valid user")
+
+    return username

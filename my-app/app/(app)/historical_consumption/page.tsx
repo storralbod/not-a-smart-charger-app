@@ -6,7 +6,7 @@ import { PiHandCoinsFill, PiHandCoinsBold } from "react-icons/pi";
 import { TbChartHistogram } from "react-icons/tb";
 import { TbCoinEuro } from "react-icons/tb";
 import { Zap } from "lucide-react";
-import HistoricPowerChart from "../../components/HistoricPowerChart";
+import HistoricPowerChart from "../../../components/HistoricPowerChart";
 
 import {
   BarChart,
