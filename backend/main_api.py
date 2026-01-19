@@ -200,7 +200,8 @@ def get_historic_costs(start_dt:str,end_dt:str):
 
     return monthly_costs.to_dict(orient="records")
 
-@app.get("/uptime_bot")
+
+@app.api_route("/uptime_bot", methods=["GET", "HEAD"])
 async def uptime_bot_check():
     return {"status_bot": "ok"}
 
