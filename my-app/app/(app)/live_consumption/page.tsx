@@ -238,10 +238,13 @@ export default function Home() {
     .toString()
     .padStart(2, "0")}`;
 
-  console.log(sessionHours, typeof sessionHours[0]);
-  console.log(chargingHours)
-  console.log(schedule)
-  console.log(sessionStartHour)
+  useEffect(() => {
+    console.log(sessionHours, typeof sessionHours[0]);
+    console.log(chargingHours)
+    console.log(schedule)
+    console.log(sessionStartHour)
+  }, [schedule]);
+
   return (
     <div className="p-6 space-y-6 bg-grey-100 rounded-xl">
 
