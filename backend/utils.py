@@ -170,7 +170,7 @@ def select_cheapest_hours(start_charge_timestamp, df, end_charge, soc):
     #selected_hours = [(i,df[i]) for i in hours]
     sorted_hours = sorted(selected_hours, key=lambda x: x[1])
 
-    num_of_charge_hours_needed = round((1-soc/100)*4) # this can be interpolated if user inputs SoC of batt. Ex: assuming it takes 4 hours to cahrge from 0 to 100%, if charge is x then charge time is (1-x/100)*4
+    num_of_charge_hours_needed = round((1-soc/100)*4.5) # this can be interpolated if user inputs SoC of batt. Ex: assuming it takes 4 hours to cahrge from 0 to 100%, if charge is x then charge time is (1-x/100)*4
     
     final_hours = [x[0] for x in sorted_hours[:num_of_charge_hours_needed]]
     
@@ -317,7 +317,7 @@ def save_sessions_to_db(start_charge_timestamp, hours:int , minutes:int, soc:int
                 (start_charge_timestamp, hours, minutes, soc)
             )
     
-def select_latest_session_from_db(start_charge_timestamp, hours:int , minutes:int, soc:int):
+def select_latest_session_from_db():
 
     with pool.connection() as conn:
         with conn.cursor() as cur:
@@ -327,8 +327,7 @@ def select_latest_session_from_db(start_charge_timestamp, hours:int , minutes:in
                 FROM sessions
                 ORDER BY start_charge_timestamp DESC
                 LIMIT 1;
-                """,
-                (start_charge_timestamp, hours, minutes, soc)
+                """
             )
             results = cur.fetchall()
 
