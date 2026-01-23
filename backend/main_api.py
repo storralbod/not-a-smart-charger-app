@@ -84,16 +84,16 @@ def save_session(start_charge_timestamp:str, hours:int,minutes:int,soc:int):
 
 @app.get("/api/select_latest_session")
 def select_latest_session():
-    rows = select_latest_session_from_db()
-    print("Collecting latest session data", type(rows), rows)
-    return [{
+    row = select_latest_session_from_db()
+    start_charge_timestamp, pick_up_hour, pick_up_minute, soc = row
+    
+    return {
         "start_charge_timestamp": start_charge_timestamp,
         "pick_up_hour": pick_up_hour,
         "pick_up_minute": pick_up_minute,
         "soc": soc,
         } 
-        for start_charge_timestamp, pick_up_hour, pick_up_minute, soc in rows
-    ]
+
 
 
 @app.get("/api/charging_schedule")
