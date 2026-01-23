@@ -79,6 +79,7 @@ export default function Home() {
       setPickUpHour(pickUpFromUrl);
       setSoc(socFromUrl);
       setStartChargeTimestamp(startChargeFromUrl);
+      console.log("Data fetched from URL")
 
       //localStorage.setItem("hours", String(pickUpFromUrl));
       //localStorage.setItem("soc", String(socFromUrl));
@@ -109,6 +110,7 @@ export default function Home() {
             //localStorage.setItem("start_charge_timestamp", data.start_charge_timestamp);
           }
         });
+        console.log("Data fetched from DB")
     }
   }, [pickUpFromUrl, socFromUrl, startChargeFromUrl]);
 
