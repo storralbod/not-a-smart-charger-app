@@ -96,7 +96,7 @@ export default function Home() {
     //} 
     else {
       // fetch from backend
-      fetch("https://not-a-smart-charger-app-sessions.onrender.com/api/select_latest_session")
+      fetch("https://not-a-smart-charger-app.onrender.com/api/select_latest_session")
         .then(res => res.json())
         .then(data => {
           if (data) {
