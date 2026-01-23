@@ -54,7 +54,7 @@ export default function HomePage() {
     }
 
     try {
-      const res = await fetch(`https://not-a-smart-charger-app-sessions.onrender.com/api/save_session?${params.toString()}`,
+      const res = await fetch(`https://not-a-smart-charger-app.onrender.com/api/save_session?${params.toString()}`,
       {
         method: "POST",
       }
