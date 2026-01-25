@@ -224,6 +224,15 @@ def create_table():
 
 async def charge(start_charge_timestamp, hours, minutes, soc, controller: MQTTClass):
 
+    spain_tz = ZoneInfo("Europe/Madrid")
+    start_charge = datetime.fromisoformat(start_charge_timestamp.replace("Z", "+00:00")).astimezone(spain_tz)
+
+    if start_charge.hour<20 and hours<start_charge.hour:
+        target_time = start_charge.replace(hour=20, minute=5, second=0, microsecond=0)
+        start_charge_timestamp = target_time.isoformat()
+        seconds_to_wait = (target_time - start_charge).total_seconds()
+        await asyncio.sleep(seconds_to_wait)
+
     pvpc_prices = get_prices_pvpc(start_charge_timestamp)
 
     end_charge_hour = hours # to be inputted by user in 24h format
