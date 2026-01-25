@@ -85,6 +85,15 @@ def save_session(start_charge_timestamp:str, hours:int,minutes:int,soc:int):
 @app.get("/api/select_latest_session")
 def select_latest_session():
     row = select_latest_session_from_db()
+    if row is None:
+    # Return nulls if no session exists
+        return {
+            "start_charge_timestamp": None,
+            "pick_up_hour": None,
+            "pick_up_minute": None,
+            "soc": None,
+        }
+    
     start_charge_timestamp, pick_up_hour, pick_up_minute, soc = row[0]
     print("Fetching last session for front")
     return {
