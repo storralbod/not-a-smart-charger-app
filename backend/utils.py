@@ -329,9 +329,21 @@ def select_latest_session_from_db():
                 LIMIT 1;
                 """
             )
-            results = cur.fetchall()
+            results = cur.fetchone()
 
     return results
+
+def delete_sessions_data():
+    
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute( 
+                """
+                DELETE FROM sessions
+                """
+            )
+            
+
 
 
 def verify_password(plain, hashed):
