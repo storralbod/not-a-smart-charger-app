@@ -92,8 +92,7 @@ def select_latest_session():
         "pick_up_hour": pick_up_hour,
         "pick_up_minute": pick_up_minute,
         "soc": soc,
-        } 
-
+        }
 
 
 @app.get("/api/charging_schedule")
@@ -133,6 +132,7 @@ async def stop_charging():
         return {"status": "no active charging session"}
 
     await asyncio.to_thread(session.controller.force_stop_charging)
+    delete_sessions_data()
 
     if session.task:
         session.task.cancel()
