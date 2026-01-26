@@ -96,8 +96,10 @@ def select_latest_session():
     
     try:
         results = row
+        print("Laset session extracted is type TUPLE")
     except:
         results = row[0]
+        print("Laset session extracted is type LIST")
 
     start_charge_timestamp, pick_up_hour, pick_up_minute, soc = results
 
