@@ -176,8 +176,7 @@ class MQTTClass():
             timestamp = spain_time_now.astimezone(timezone.utc).isoformat()
         )
         
-        while spain_time_now < end_date: # change to while datetime.now() < user_inputted_end_hour
-            spain_time_now = datetime.now(spain_tz)
+        while datetime.now(spain_tz) < end_date: # change to while datetime.now() < user_inputted_end_hour
             if self.hour_match(hours):
                 self.set_switch(True)
                 self.confirm_switch_state(True)
