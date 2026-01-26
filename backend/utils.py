@@ -129,7 +129,8 @@ def get_prices_pvpc(start_charge_timestamp, area=str):
 
     # params for request
     params = {"start_date":start_dt,
-              "end_date":end_dt}
+              "end_date":end_dt
+              }
 
     headers = {
     "Accept": "application/json; application/vnd.esios-api-v1+json",
@@ -138,6 +139,7 @@ def get_prices_pvpc(start_charge_timestamp, area=str):
     }
 
     response_pvpc = requests.get(pvpc_url, params=params, headers=headers)
+    print(response_pvpc.status_code)
     content = response_pvpc.json()
     pvpc_hour_values = [_dict['value'] for _dict in content['indicator']['values'] if _dict['geo_name']=='Península']
 
@@ -227,8 +229,8 @@ async def charge(start_charge_timestamp, hours, minutes, soc, controller: MQTTCl
     spain_tz = ZoneInfo("Europe/Madrid")
     start_charge = datetime.fromisoformat(start_charge_timestamp.replace("Z", "+00:00")).astimezone(spain_tz)
 
-    if start_charge.hour<21 and hours<start_charge.hour:
-        target_time = start_charge.replace(hour=21, minute=5, second=0, microsecond=0)
+    if start_charge.hour<20 and hours<start_charge.hour:
+        target_time = start_charge.replace(hour=20, minute=35, second=0, microsecond=0)
         start_charge_timestamp = target_time.isoformat()
         seconds_to_wait = (target_time - start_charge).total_seconds()
         await asyncio.sleep(seconds_to_wait)

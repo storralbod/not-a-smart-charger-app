@@ -96,7 +96,8 @@ export default function Home() {
     //} 
     else {
       // fetch from backend
-      fetch("https://not-a-smart-charger-app.onrender.com/api/select_latest_session")
+      fetch("http://localhost:8000/api/select_latest_session")
+      //fetch("https://not-a-smart-charger-app.onrender.com/api/select_latest_session")
         .then(res => res.json())
         .then(data => {
           if (data) {
@@ -120,8 +121,8 @@ export default function Home() {
 
     const fetchSchedule = async () => {
       const res = await fetch(
-        //`http://localhost:8000/api/charging_schedule` +
-        `https://not-a-smart-charger-app.onrender.com/api/charging_schedule` +
+        `http://127.0.0.1:8000/api/charging_schedule` +
+        //`https://not-a-smart-charger-app.onrender.com/api/charging_schedule` +
         `?start_charge_timestamp=${encodeURIComponent(start_charge_timestamp!)}` +
         `&hours=${pick_up_hour}` +
         `&soc=${soc}`

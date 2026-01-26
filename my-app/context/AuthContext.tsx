@@ -16,15 +16,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    //fetch("http://localhost:8000/api/me", { credentials: "include" })
-    fetch("https://not-a-smart-charger-app.onrender.com/api/me", { credentials: "include" })
+    fetch("http://localhost:8000/api/me", { credentials: "include" })
+    //fetch("https://not-a-smart-charger-app.onrender.com/api/me", { credentials: "include" })
       .then(res => res.ok ? res.json() : null)
       .then(data => setUser(data?.username ?? null))
       .finally(() => setLoading(false));
   }, []);
 
   const login = async (username: string, password: string) => {
-    //const res = await fetch("http://localhost:8000/api/login", {
+    //const res = await fetch("http://127.0.0.1:8000/api/login", {
     const res = await fetch("https://not-a-smart-charger-app.onrender.com/api/login", {
         method: "POST",
         credentials: "include",
@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // logout to be added on backend. In the meantime, token expiration works as automatic logout
   const logout = async () => {
-    //await fetch("http://localhost:8000/api/logout", { credentials: "include" });
+    //await fetch("http://127.0.0.1:8000 /api/logout", { credentials: "include" });
     await fetch("https://not-a-smart-charger-app.onrender.com/api/logout", { credentials: "include" });
     setUser(null);
   };

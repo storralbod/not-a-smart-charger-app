@@ -35,6 +35,16 @@ def save_power_reading(device_id, power, timestamp):
                 (timestamp, device_id, power)
             )
 
+def delete_sessions_data():
+    
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute( 
+                """
+                DELETE FROM sessions
+                """
+            )
+
 class MQTTClass():
     def __init__(self, device_id:str= "", broker:str="", port:int=None, loop:str=""):
         self.device_id = device_id
@@ -199,6 +209,8 @@ class MQTTClass():
             power=0,
             timestamp = spain_time_now.astimezone(timezone.utc).isoformat()
         )
+
+        delete_sessions_data()
 
     def force_stop_charging(self):
 

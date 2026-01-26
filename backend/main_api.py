@@ -85,14 +85,14 @@ def save_session(start_charge_timestamp:str, hours:int,minutes:int,soc:int):
 @app.get("/api/select_latest_session")
 def select_latest_session():
     row = select_latest_session_from_db()
-    #if row is None:
-    # Return nulls if no session exists
-    #    return {
-    #        "start_charge_timestamp": None,
-    #        "pick_up_hour": None,
-    #        "pick_up_minute": None,
-    #        "soc": None,
-    #    }
+    print(type(row),row)
+    if row is None:
+        return {
+            "start_charge_timestamp": None,
+            "pick_up_hour": None,
+            "pick_up_minute": None,
+            "soc": None,
+        }
     
     start_charge_timestamp, pick_up_hour, pick_up_minute, soc = row[0]
     print("Fetching last session for front")
@@ -219,11 +219,11 @@ async def uptime_bot_check():
 async def login(response: Response, data: LoginRequest):
     username = data.username
     password = data.password
-
+    #print(password, APP_PASSWORD)
     if username != APP_USERNAME or password!=APP_PASSWORD:
-        print(username, APP_USERNAME)
-        print(password, APP_PASSWORD)
-        print("Not authorized")
+        #print(username, APP_USERNAME)
+        #print(password, APP_PASSWORD)
+        #print("Not authorized")
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     token = create_access_token({"sub": username})
@@ -234,7 +234,7 @@ async def login(response: Response, data: LoginRequest):
         key="access_token",
         value=token,
         httponly=True,
-        secure=True,     # set False for localhost
+        secure=False,     # set False for localhost
         samesite="none",
         max_age=49*60*60,    # 2 hours
         expires=49*60*60
