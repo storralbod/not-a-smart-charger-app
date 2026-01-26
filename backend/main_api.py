@@ -94,7 +94,13 @@ def select_latest_session():
             "soc": None,
         }
     
-    start_charge_timestamp, pick_up_hour, pick_up_minute, soc = row[0]
+    try:
+        results = row
+    except:
+        results = row[0]
+
+    start_charge_timestamp, pick_up_hour, pick_up_minute, soc = results
+
     print("Fetching last session for front")
     return {
         "start_charge_timestamp": start_charge_timestamp,
@@ -142,6 +148,7 @@ async def stop_charging():
 
     await asyncio.to_thread(session.controller.force_stop_charging)
     delete_sessions_data()
+    print("Deleted sessions table data")
 
     if session.task:
         session.task.cancel()
