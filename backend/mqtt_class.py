@@ -211,6 +211,7 @@ class MQTTClass():
         )
 
         delete_sessions_data()
+        print("Sessions table cleared")
 
     def force_stop_charging(self):
 

@@ -180,29 +180,29 @@ export default function Home() {
       pickup.setDate(pickup.getDate() + 1);
     }
     
-    const interval = setInterval(() => {
-      const now = new Date();
-      const diff = pickup.getTime() - now.getTime();
+    //const interval = setInterval(() => {
+    //  const now = new Date();
+    const diff = pickup.getTime() - now.getTime();
 
-      if (diff <= 0) {
-        setCountdown("00:00:00");
-        clearInterval(interval); 
-        return;
-      }
+    if (diff <= 0) {
+      setCountdown("00:00:00");
+      //clearInterval(interval); 
+      return;
+    }
 
-      const hours = Math.floor(diff / 1000 / 3600);
-      const minutes = Math.floor((diff / 1000 / 60) % 60);
-      const seconds = Math.floor((diff / 1000) % 60);
+    const hours = Math.floor(diff / 1000 / 3600);
+    const minutes = Math.floor((diff / 1000 / 60) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
 
-      setCountdown(
-        `${hours.toString().padStart(2, "0")}:${minutes
-          .toString()
-          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-      );
-    }, 1000);
+    setCountdown(
+      `${hours.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+    );
+  //}, 1000);
 
-    return () => clearInterval(interval);
-  }, [pick_up_hour, sessionStartHour]);
+   // return () => clearInterval(interval);
+  }, [now, start_charge_timestamp, pick_up_hour, sessionStartHour]);
 
   useEffect(() => {
     const interval = setInterval(() => {
