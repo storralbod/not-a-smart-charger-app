@@ -29,7 +29,7 @@ export default function HomePage() {
 
     try {
       const res = await fetch(
-      //`http://localhost:8000/api/charge?${params.toString()}`,
+      //`http://127.0.0.1:8000/api/charge?${params.toString()}`,
       `https://not-a-smart-charger-app.onrender.com/api/charge?${params.toString()}`,
       {
         method: "POST",
@@ -55,6 +55,7 @@ export default function HomePage() {
 
     try {
       const res = await fetch(`https://not-a-smart-charger-app.onrender.com/api/save_session?${params.toString()}`,
+      //const res = await fetch(`http://127.0.0.1:8000/api/save_session?${params.toString()}`,
       {
         method: "POST",
       }

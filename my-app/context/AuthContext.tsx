@@ -16,8 +16,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/me", { credentials: "include" })
-    //fetch("https://not-a-smart-charger-app.onrender.com/api/me", { credentials: "include" })
+    //fetch("http://localhost:8000/api/me", { credentials: "include" })
+    fetch("https://not-a-smart-charger-app.onrender.com/api/me", { credentials: "include" })
       .then(res => res.ok ? res.json() : null)
       .then(data => setUser(data?.username ?? null))
       .finally(() => setLoading(false));

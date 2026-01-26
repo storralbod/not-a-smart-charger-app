@@ -139,7 +139,6 @@ def get_prices_pvpc(start_charge_timestamp, area=str):
     }
 
     response_pvpc = requests.get(pvpc_url, params=params, headers=headers)
-    print(response_pvpc.status_code)
     content = response_pvpc.json()
     pvpc_hour_values = [_dict['value'] for _dict in content['indicator']['values'] if _dict['geo_name']=='Península']
 
