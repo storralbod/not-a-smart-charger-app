@@ -10,19 +10,18 @@ from .db import pool
 
 def seconds_until_next_hour():
     now = datetime.now()
-    next_hour = (now + timedelta(hours=1)).replace(
-        minute=0, second=0, microsecond=0
-    )
+    next_hour = (now + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
     return (next_hour - now).total_seconds()
 
+
 clients = set()
+
+
 async def broadcast_power(power):
-    message = {
-        "power": power,
-        "timestamp": datetime.now(timezone.utc).isoformat()
-    }
+    message = {"power": power, "timestamp": datetime.now(timezone.utc).isoformat()}
     for ws in clients:
         await ws.send_text(json.dumps(message))
+
 
 def save_power_reading(device_id, power, timestamp):
     with pool.connection() as conn:
@@ -32,21 +31,25 @@ def save_power_reading(device_id, power, timestamp):
                 INSERT INTO power_readings (timestamp, device_id, power)
                 VALUES (%s, %s, %s)
                 """,
-                (timestamp, device_id, power)
+                (timestamp, device_id, power),
             )
 
+
 def delete_sessions_data():
-    
+
     with pool.connection() as conn:
         with conn.cursor() as cur:
-            cur.execute( 
+            cur.execute(
                 """
                 DELETE FROM sessions
                 """
             )
 
-class MQTTClass():
-    def __init__(self, device_id:str= "", broker:str="", port:int=None, loop:str=""):
+
+class MQTTClass:
+    def __init__(
+        self, device_id: str = "", broker: str = "", port: int = None, loop: str = ""
+    ):
         self.device_id = device_id
         self.broker = broker
         self.port = port
@@ -58,7 +61,9 @@ class MQTTClass():
         self.status_topic = f"{device_id}/status"
         self.command_topic = f"{device_id}/command"
 
-        self.client = mqtt.Client(client_id=f"{device_id} MQTT Client", userdata={"loop": loop})
+        self.client = mqtt.Client(
+            client_id=f"{device_id} MQTT Client", userdata={"loop": loop}
+        )
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
 
@@ -68,7 +73,6 @@ class MQTTClass():
         self.connected = False
 
         self.switch_map = {True: "on", False: "off"}
-
 
     def connect(self):
         self.client.connect(self.broker, self.port, 60)
@@ -83,7 +87,7 @@ class MQTTClass():
         self.client.publish(self.command_topic, "status_update")
 
     def check_online_status(self):
-        print('Checking if device connected:')
+        print("Checking if device connected:")
 
         start_time = time.time()
         timeout = 5
@@ -91,9 +95,7 @@ class MQTTClass():
             time.sleep(1)
 
         if not self.connected:
-            print('Device not connected')
-            
-
+            print("Device not connected")
 
     def on_message(self, client, userdata, msg):
         payload = json.loads(msg.payload.decode())
@@ -101,58 +103,66 @@ class MQTTClass():
         if msg.topic == self.switch_status_topic:
             self.last_status = payload
             self.switch_on = payload.get("output", self.switch_on)
-            if 'apower' in payload.keys():
+            if "apower" in payload.keys():
                 self.last_power = payload.get("apower", 0)
-                asyncio.run_coroutine_threadsafe(broadcast_power(self.last_power), userdata['loop'])
+                asyncio.run_coroutine_threadsafe(
+                    broadcast_power(self.last_power), userdata["loop"]
+                )
                 save_power_reading(
                     device_id=self.device_id,
                     power=self.last_power,
-                    timestamp = datetime.now(timezone.utc).isoformat()
+                    timestamp=datetime.now(timezone.utc).isoformat(),
                 )
-                #print("Power consumed: ",self.last_power)
+                # print("Power consumed: ",self.last_power)
 
         elif msg.topic == self.event_topic:
             try:
                 params = payload["params"]["switch:0"]
-                #if "apower" in params:
-                if "apower" in params: #and datetime.now().second>57: # comment and uncomment above if want data every second and not minute
+                # if "apower" in params:
+                if (
+                    "apower" in params
+                ):  # and datetime.now().second>57: # comment and uncomment above if want data every second and not minute
                     self.last_power = params["apower"]
-                    asyncio.run_coroutine_threadsafe(broadcast_power(self.last_power), userdata['loop'])
+                    asyncio.run_coroutine_threadsafe(
+                        broadcast_power(self.last_power), userdata["loop"]
+                    )
                     save_power_reading(
                         device_id=self.device_id,
                         power=self.last_power,
-                        timestamp = datetime.now(timezone.utc).isoformat()
+                        timestamp=datetime.now(timezone.utc).isoformat(),
                     )
-                    #print("Power consumed: ",self.last_power)
+                    # print("Power consumed: ",self.last_power)
             except KeyError:
                 pass
 
         elif msg.topic == self.status_topic:
             if payload["mqtt"]["connected"] == True:
                 self.connected = True
-                print('Device plugged and connected')
-        
+                print("Device plugged and connected")
 
     def set_switch(self, state: bool):
-        print(f"Setting switch {self.switch_map[state]}")
-        self.client.publish(self.switch_command_topic , self.switch_map[state])
+        self.client.publish(self.switch_command_topic, self.switch_map[state])
 
     def confirm_switch_state(self, state):
+        last_log = None
         while True:
             try:
-                self.client.publish(self.switch_command_topic , "status_update")
+                self.client.publish(self.switch_command_topic, "status_update")
                 if self.switch_on == state:
                     print("Confirmed")
                     break
                 else:
-                    print("Not confirmed")
-                    self.set_switch(state)                    
+                    if last_log != "not confirmed":
+                        print("Not confirmed")
+                    self.set_switch(state)
+                    last_log = "not confirmed"
 
             except:
-                self.set_switch(state) 
+                if last_log != "not confirmed":
+                    print(f"Setting switch {self.switch_map[state]}")
+                self.set_switch(state)
 
             time.sleep(1)
-
 
     @staticmethod
     def hour_match(hours):
@@ -160,23 +170,26 @@ class MQTTClass():
         spain_time_now = datetime.now(spain_tz)
         return spain_time_now.hour in hours
 
-
     def run_charging_schedule(self, hours, end_charge_hour):
         print("Charging hours:", hours)
         spain_tz = ZoneInfo("Europe/Madrid")
         spain_time_now = datetime.now(spain_tz)
-        end_date = spain_time_now.replace(hour=end_charge_hour, minute=0, second=0, microsecond=0)
+        end_date = spain_time_now.replace(
+            hour=end_charge_hour, minute=0, second=0, microsecond=0
+        )
 
         if end_date <= spain_time_now:
             end_date += timedelta(days=1)
-            
+
         save_power_reading(
             device_id=self.device_id,
             power=0,
-            timestamp = spain_time_now.astimezone(timezone.utc).isoformat()
+            timestamp=spain_time_now.astimezone(timezone.utc).isoformat(),
         )
-        
-        while datetime.now(spain_tz) < end_date: # change to while datetime.now() < user_inputted_end_hour
+
+        while (
+            datetime.now(spain_tz) < end_date
+        ):  # change to while datetime.now() < user_inputted_end_hour
             if self.hour_match(hours):
                 self.set_switch(True)
                 self.confirm_switch_state(True)
@@ -191,11 +204,11 @@ class MQTTClass():
                 save_power_reading(
                     device_id=self.device_id,
                     power=0,
-                    timestamp = spain_time_now.astimezone(timezone.utc).isoformat()
+                    timestamp=spain_time_now.astimezone(timezone.utc).isoformat(),
                 )
-                
+
                 sleep_seconds = seconds_until_next_hour()
-                print("Minutes until next hourr: ", sleep_seconds/60)
+                print("Minutes until next hourr: ", sleep_seconds / 60)
                 time.sleep(sleep_seconds)
 
         self.set_switch(False)
@@ -206,7 +219,7 @@ class MQTTClass():
         save_power_reading(
             device_id=self.device_id,
             power=0,
-            timestamp = spain_time_now.astimezone(timezone.utc).isoformat()
+            timestamp=spain_time_now.astimezone(timezone.utc).isoformat(),
         )
 
         delete_sessions_data()
@@ -219,6 +232,3 @@ class MQTTClass():
         self.client.loop_stop()
 
         return self.switch_on
-        
-
-    

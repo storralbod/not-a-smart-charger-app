@@ -229,6 +229,7 @@ async def charge(start_charge_timestamp, hours, minutes, soc, controller: MQTTCl
     start_charge = datetime.fromisoformat(start_charge_timestamp.replace("Z", "+00:00")).astimezone(spain_tz)
 
     if start_charge.hour<20 and hours<start_charge.hour:
+        print("Waiting for time to be 20:30")
         target_time = start_charge.replace(hour=20, minute=35, second=0, microsecond=0)
         start_charge_timestamp = target_time.isoformat()
         seconds_to_wait = (target_time - start_charge).total_seconds()
